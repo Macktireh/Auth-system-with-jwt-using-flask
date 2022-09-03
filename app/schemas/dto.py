@@ -1,16 +1,26 @@
 from flask_restplus import Namespace, fields
 
 
-class UserDto:
-    api = Namespace('user', description='user related operations')
-    user = api.model('user', {
+class AuthDto:
+    api = Namespace('Auth', description='user auth')
+    ISignup = api.model('signup', {
         'email': fields.String(required=True, description='user email address'),
         'fullName': fields.String(required=True, description='user username'),
         'publicId': fields.String(description='user Identifier'),
         'password': fields.String(required=True, description='user password'),
         'passwordConfirm': fields.String(required=True, description='user password confirm'),
     })
-    users = api.model('users', {
+    ILogin = api.model('login', {
+        'email': fields.String(required=True, description='user email address'),
+        'password': fields.String(required=True, description='user password'),
+    })
+    IToken = api.model('token', {
+        'token': fields.String(required=True, description='token'),
+    })
+
+class UserDto:
+    api = Namespace('User', description='user related operations')
+    IUser = api.model('users', {
         'email': fields.String(required=True, description='user email address'),
         'fullName': fields.String(required=True, description='user username'),
         'publicId': fields.String(description='user Identifier'),

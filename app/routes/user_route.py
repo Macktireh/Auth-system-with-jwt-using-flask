@@ -1,40 +1,47 @@
 from flask import request
 from flask_restplus import Resource
 
+from flask_jwt_extended import jwt_required, get_jwt_identity
+
 from app.schemas.dto import UserDto
-from app.services.user_service import add_new_user, get_all_users, get_a_user
+from app.services.user_service import UserServices
+from app.utils import status
+
 
 api = UserDto.api
-_user = UserDto.user
 
-
-@api.route('/')
-class UserList(Resource):
+@api.route('/me')
+class CurrentUserRoute(Resource):
     @api.doc('list_of_registered_users')
-    @api.marshal_list_with(UserDto.users, envelope='data')
+    @api.marshal_list_with(UserDto.IUser, envelope='data')
+    @jwt_required()
     def get(self):
         """List all registered users"""
-        return get_all_users()
+        identity = get_jwt_identity()
+        return UserServices().get_by_publicId(identity["publicId"])
+        current_user = UserServices().get_by_publicId(identity["publicId"])
+        print()
+        print(current_user)
+        print()
+        if current_user is not None:
+            return UserServices().get_by_publicId(identity["publicId"])
+        return {
+                'status': 'fail',
+                "message": "The token is invalid or expired",
+                "code": "token_not_valid"
+            }, status.HTTP_401_UNAUTHORIZED
 
-    @api.response(201, 'User successfully created.')
-    @api.doc('create a new user')
-    @api.expect(_user, validate=True)
-    def post(self):
-        """Creates a new User """
-        data = request.json
-        return add_new_user(data=data)
 
-
-@api.route('/<publicId>')
-@api.param('publicId', 'The User identifier')
-@api.response(404, 'User not found.')
-class User(Resource):
-    @api.doc('get a user')
-    @api.marshal_with(UserDto.users)
-    def get(self, publicId):
-        """get a user given its identifier"""
-        user = get_a_user(publicId)
-        if not user:
-            api.abort(404)
-        else:
-            return user
+# @api.route('/<publicId>')
+# @api.param('publicId', 'The User identifier')
+# @api.response(404, 'User not found.')
+# class User(Resource):
+#     @api.doc('get a user')
+#     @api.marshal_with(UserDto.users)
+#     def get(self, publicId):
+#         """get a user given its identifier"""
+#         user = get_a_user(publicId)
+#         if not user:
+#             api.abort(404)
+#         else:
+#             return user

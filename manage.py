@@ -3,15 +3,32 @@ import unittest
 
 from flask_migrate import Migrate, MigrateCommand
 from flask_script import Manager
+from flask import jsonify
+from flask_mail import Mail
 
 from app import create_app, db
 from app.models import user
 from app.routes import blueprint
 
-app = create_app(os.environ.get('BOILERPLATE_ENV', 'dev'))
+app, mail = create_app(os.environ.get('BOILERPLATE_ENV', 'dev'))
+
 app.register_blueprint(blueprint)
 
-app.app_context().push()
+# app.app_context().push()
+
+@app.errorhandler(403)
+def forbidden(e):
+    return jsonify({
+        "message": "Forbidden",
+        "error": str(e),
+    }), 403
+
+@app.errorhandler(404)
+def forbidden(e):
+    return jsonify({
+        "message": "Endpoint Not Found",
+        "error": str(e),
+    }), 404
 
 manager = Manager(app)
 
@@ -31,6 +48,7 @@ def test():
     if result.wasSuccessful():
         return 0
     return 1
+
 
 if __name__ == '__main__':
     manager.run()
