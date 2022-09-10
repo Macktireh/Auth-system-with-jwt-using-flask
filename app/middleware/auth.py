@@ -4,6 +4,7 @@ from flask_jwt_extended import decode_token
 
 from app.services.user_service import UserServices
 from app.utils import status
+from app.utils.token import check_access_token
 
 
 def token_required(f):
@@ -26,14 +27,14 @@ def token_required(f):
                 "error": "Unauthorized"
             }, status.HTTP_401_UNAUTHORIZED
         try:
-            current_user = UserServices().decode_auth_token(token)
+            current_user = check_access_token(token)
             if current_user is None:
                 return {
                 "message": "Invalid Authentication token!",
                 "error": "Unauthorized"
             }, status.HTTP_401_UNAUTHORIZED
-            if not current_user.isActive:
-                abort(403)
+            # if not current_user.isActive:
+            #     abort(403)
         except Exception as e:
             return {
                 "message": "Something went wrong",

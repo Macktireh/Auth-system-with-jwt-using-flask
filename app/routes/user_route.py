@@ -2,6 +2,7 @@ from flask import request
 from flask_restplus import Resource
 
 from flask_jwt_extended import jwt_required, get_jwt_identity
+from app.middleware.auth import token_required
 
 from app.schemas.dto import UserDto
 from app.services.user_service import UserServices
@@ -17,19 +18,20 @@ class CurrentUserRoute(Resource):
     @jwt_required()
     def get(self):
         """List all registered users"""
+        # return current_user
         identity = get_jwt_identity()
         return UserServices().get_by_publicId(identity["publicId"])
-        current_user = UserServices().get_by_publicId(identity["publicId"])
-        print()
-        print(current_user)
-        print()
-        if current_user is not None:
-            return UserServices().get_by_publicId(identity["publicId"])
-        return {
-                'status': 'fail',
-                "message": "The token is invalid or expired",
-                "code": "token_not_valid"
-            }, status.HTTP_401_UNAUTHORIZED
+        # current_user = UserServices().get_by_publicId(identity["publicId"])
+        # print()
+        # print(current_user)
+        # print()
+        # if current_user is not None:
+        #     return UserServices().get_by_publicId(identity["publicId"])
+        # return {
+        #         'status': 'fail',
+        #         "message": "The token is invalid or expired",
+        #         "code": "token_not_valid"
+        #     }, status.HTTP_401_UNAUTHORIZED
 
 
 # @api.route('/<publicId>')

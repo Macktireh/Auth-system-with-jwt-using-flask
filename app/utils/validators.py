@@ -47,18 +47,19 @@ def validate_email(email: str):
 
 def validate_user(**args):
     """User Validator"""
-    if  not args.get('email') or not args.get('password') or not args.get('fullName'):
+    if  not args.get('email') or not args.get('password') or not args.get('firstName') or not args.get('lastName'):
         return {
             'email': 'Email is required',
+            'firstName': 'firstName is required',
+            'lastName': 'lastName is required',
             'password': 'Password is required',
-            'fullName': 'fullName is required'
         }
-    if not isinstance(args.get('fullName'), str) or \
-        not isinstance(args.get('email'), str) or not isinstance(args.get('password'), str):
+    if not isinstance(args.get('email'), str) or not isinstance(args.get('password'), str):
         return {
             'email': 'Email must be a string',
+            'firstName': 'firstName must be a string',
+            'lastName': 'lastName must be a string',
             'password': 'Password must be a string',
-            'fullName': 'fullName must be a string'
         }
     if not validate_email(args.get('email')):
         return {
@@ -68,10 +69,14 @@ def validate_user(**args):
         return {
             'password': 'Password is invalid, Should be atleast 8 characters with upper and lower case letters, numbers and special characters'
         }
-    if not 2 <= len(args['fullName'].split(' ')) <= 10:
-        return {
-            'fullName': 'fullName must be between 2 and 10 words'
-        }
+    # if not 2 <= len(args['firstName'].split(' ')) <= 10:
+    #     return {
+    #         'firstName': 'firstName must be between 2 and 10 words'
+    #     }
+    # if not 2 <= len(args['lastName'].split(' ')) <= 10:
+    #     return {
+    #         'lastName': 'lastName must be between 2 and 10 words'
+    #     }
     return True
 
 def validate_email_and_password(email, password):

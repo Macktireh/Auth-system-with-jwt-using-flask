@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+
+
+{% block style %}
+<link rel="stylesheet" href="{{ url_for('static', filename='auth/style.css') }}">
+{% endblock style %}
+
+{% block title %} S'identifier {% endblock title %}
+
+{% block content %}
+<main>
+  <div class="form-container">
+    <div class="title-form">
+      <h1>S'identifier</h1>
+    </div>
+
+    <form method="POST">
+
+      <div class="txt_field">
+        <input type="text" name="email" required autocomplete="off">
+        <span class="span-border-bottom"></span>
+        <label>Email</label>
+      </div>
+
+      <div class="txt_field">
+        <input type="password" name="password" required autocomplete="off">
+        <span class="span-border-bottom"></span>
+        <label>Mot de passe</label>
+      </div>
+
+      <a href="#" class="pass">Mot de passe oublié ?</a>
+      <input type="submit" value="Se connecter">
+      <div class="sign_link">
+        Vous n'avez pas de compte ? <a href="#">S'inscrire</a>
+        <p>Revenir au page <a href="#">d'acceuil</a></p>
+      </div>
+    </form>
+  </div>
+</main>
+{% endblock content %}
+
+
+{% block js %} {% endblock js %}

@@ -3,18 +3,30 @@ import unittest
 
 from flask_migrate import Migrate, MigrateCommand
 from flask_script import Manager
-from flask import jsonify
-from flask_mail import Mail
+from flask import jsonify, render_template
+from flask_admin.contrib.sqla import ModelView
 
 from app import create_app, db
-from app.models import user
-from app.routes import blueprint
+from app.admin.views import AdminModelView
+from app.models.user import User
+from app.routes import blueprint as blueprint_api
+from app.views.auth import blueprint as blueprint_auth
 
-app, mail = create_app(os.environ.get('BOILERPLATE_ENV', 'dev'))
+app, admin = create_app(os.environ.get('BOILERPLATE_ENV', 'dev'))
 
-app.register_blueprint(blueprint)
+app.register_blueprint(blueprint_api)
+app.register_blueprint(blueprint_auth)
 
-# app.app_context().push()
+
+# Admin pannel register model
+admin.add_view(AdminModelView(User, db.session))
+
+
+import flask_login
+
+login_manager = flask_login.LoginManager()
+
+login_manager.init_app(app)
 
 @app.errorhandler(403)
 def forbidden(e):
@@ -29,6 +41,17 @@ def forbidden(e):
         "message": "Endpoint Not Found",
         "error": str(e),
     }), 404
+
+@login_manager.user_loader
+def user_loader(email):
+        return
+
+
+@login_manager.request_loader
+def request_loader(request):
+
+        return
+
 
 manager = Manager(app)
 

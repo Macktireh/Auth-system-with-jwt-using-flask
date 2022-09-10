@@ -3,6 +3,7 @@ from flask_restplus import Resource
 from flask_jwt_extended import jwt_required, get_jwt_identity
 
 from app.schemas.dto import AuthDto
+from app.services.auth_service import AuthServices
 from app.services.user_service import UserServices
 from app.utils import status
 
@@ -17,7 +18,7 @@ class SignupRoute(Resource):
     def post(self):
         """Creates a new User """
         data = request.json
-        return UserServices().create(data=data)
+        return AuthServices().register(data=data)
 
 
 @api.route('/account/activation')
@@ -28,10 +29,7 @@ class AccountActivationRoute(Resource):
     def post(self):
         """Account Activation """
         try:
-            print()
-            print("request.json : ", request.json)
-            print()
-            return UserServices().account_activate(request.json.get('token'))
+            return AuthServices().account_activate(request.json.get('token'))
         except Exception as e:
             return {
                     "message": "Something went wrong!",
@@ -49,7 +47,7 @@ class LoginRoute(Resource):
         """user login """
         try:
             data: dict = request.json
-            return UserServices().login(data.get('email'), data.get('password'))
+            return AuthServices().login(data.get('email'), data.get('password'))
         except Exception as e:
             return {
                     "message": "Something went wrong!",
@@ -66,4 +64,4 @@ class RefreshToken(Resource):
     def post(self):
         """Refresh JWT Token """
         identity = get_jwt_identity()
-        return UserServices().refresh_token(identity)
+        return AuthServices().refresh_token(identity)
